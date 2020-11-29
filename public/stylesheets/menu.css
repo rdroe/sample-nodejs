@@ -1,0 +1,28 @@
+body, html {
+width: 100%;
+height: 100%;
+}
+.container{
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(25vw, 20vh) auto;
+}
+
+.rect.top {
+  background-color: blue;
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+.rect.side {
+  background-color: aliceblue;
+  grid-row-start: 2;
+  grid-row-end: 3;
+}
+
+.text {
+  grid-row-start: 2;
+  grid-row-end: 3;
+}

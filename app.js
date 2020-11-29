@@ -1,41 +1,24 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-// var usersRouter = require('./routes/users');
+const connect = require('connect')
+const serveStatic = require('serve-static')
+const vhost = require('vhost')
 
-var app = express();
+const DOMAIN_1 =  process.env.DOMAIN_1 || 'davoroe.com'
+const FILES_1 = process.env.FILES_1 || 'public'
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+const DOMAIN_2 = process.env.DOMAIN_2 || 'vidroe.com'
+const FILES_2 = process.env.FILES_2 || 'vidroe/public'
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+const app = connect()
 
-app.use('/', indexRouter);
-// app.use('/users', usersRouter);
+const setUpSite = (domain, staticFiles) => {
+  const staticApp = connect()
+  staticApp.use(serveStatic(staticFiles))
+  app.use(vhost(domain, staticApp))
+  app.use(vhost(domain + '/' + '*', staticApp))
+}
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+setUpSite(DOMAIN_1, FILES_1)
+setUpSite(DOMAIN_2, FILES_2)
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-module.exports = app;
+module.exports = app
